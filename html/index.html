@@ -4,84 +4,121 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>AI-Powered Movie Recommender | Devak Mehta</title>
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
+
     :root {
       --bg: #000000;
       --text: #ffffff;
-      --accent: #60a5fa;
-      --accent-glow: rgba(96, 165, 250, 0.3);
-      --card-bg: rgba(17, 24, 39, 0.5);
-      --border: rgba(255, 255, 255, 0.1);
+
+      /* Cinematic red palette */
+      --accent: #e50914;
+      --accent-2: #b20710;
+      --accent-glow: rgba(229, 9, 20, 0.35);
+
+      --card-bg: rgba(15, 15, 15, 0.76);
+      --border: rgba(255, 255, 255, 0.12);
     }
-    
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       overflow-x: hidden;
       line-height: 1.6;
+      min-height: 100vh;
     }
-    
-    /* Animated Grid Background */
-    .grid-bg {
+
+    /* ───────────────── Movie Poster Wall Background ───────────────── */
+    .poster-wall {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        linear-gradient(rgba(96, 165, 250, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(96, 165, 250, 0.05) 1px, transparent 1px);
-      background-size: 50px 50px;
-      animation: gridMove 20s linear infinite;
+      inset: -140px;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 18px;
+      opacity: 0.55;
+      filter: blur(1px);
+      transform: rotate(-6deg) scale(1.1);
       pointer-events: none;
       z-index: 0;
     }
-    
+
+    .poster {
+      width: 100%;
+      aspect-ratio: 2 / 3;
+      background-size: cover;
+      background-position: center;
+      border-radius: 10px;
+    }
+
+    /* Dark overlay for readability + cinematic red glow */
+    .poster-overlay {
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,.75), rgba(0,0,0,.95)),
+        radial-gradient(circle at 30% 20%, rgba(229, 9, 20, 0.25), transparent 60%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Animated Grid Background */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(229, 9, 20, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(229, 9, 20, 0.035) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: gridMove 20s linear infinite;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0.9;
+    }
+
     @keyframes gridMove {
       0% { transform: translate(0, 0); }
       100% { transform: translate(50px, 50px); }
     }
-    
+
     /* Gradient Orbs */
     .orb {
       position: fixed;
       border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.6;
+      filter: blur(90px);
+      opacity: 0.55;
       pointer-events: none;
-      z-index: 0;
+      z-index: 2;
     }
-    
+
     .orb-1 {
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(96, 165, 250, 0.4), transparent);
-      top: -200px;
-      right: -200px;
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, rgba(229, 9, 20, 0.45), transparent);
+      top: -220px;
+      right: -220px;
       animation: float 15s ease-in-out infinite;
     }
-    
+
     .orb-2 {
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(168, 85, 247, 0.3), transparent);
-      bottom: -150px;
-      left: -150px;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(178, 7, 16, 0.35), transparent);
+      bottom: -160px;
+      left: -160px;
       animation: float 12s ease-in-out infinite reverse;
     }
-    
+
     @keyframes float {
       0%, 100% { transform: translate(0, 0) scale(1); }
       50% { transform: translate(50px, 50px) scale(1.1); }
     }
-    
+
     /* Container */
     .container {
       position: relative;
-      z-index: 1;
+      z-index: 3;
       max-width: 1200px;
       margin: 0 auto;
       padding: 40px 20px;
@@ -91,27 +128,27 @@
       align-items: center;
       justify-content: center;
     }
-    
+
     /* Hero Section */
     .hero {
       text-align: center;
       margin-bottom: 60px;
     }
-    
+
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 8px 16px;
-      background: rgba(96, 165, 250, 0.1);
-      border: 1px solid rgba(96, 165, 250, 0.3);
+      background: rgba(229, 9, 20, 0.12);
+      border: 1px solid rgba(229, 9, 20, 0.35);
       border-radius: 999px;
       font-size: 14px;
       color: var(--accent);
       margin-bottom: 24px;
       animation: fadeInUp 0.6s ease-out;
     }
-    
+
     .pulse-dot {
       width: 8px;
       height: 8px;
@@ -119,30 +156,30 @@
       border-radius: 50%;
       animation: pulse 2s ease-in-out infinite;
     }
-    
+
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.5; transform: scale(1.2); }
     }
-    
+
     h1 {
       font-size: clamp(36px, 6vw, 72px);
       font-weight: 800;
       margin-bottom: 20px;
-      background: linear-gradient(135deg, #ffffff 0%, #60a5fa 100%);
+      background: linear-gradient(135deg, #ffffff 0%, var(--accent) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       animation: fadeInUp 0.8s ease-out 0.2s both;
     }
-    
+
     .subtitle {
       font-size: clamp(18px, 3vw, 24px);
       color: rgba(255, 255, 255, 0.7);
       margin-bottom: 16px;
       animation: fadeInUp 1s ease-out 0.4s both;
     }
-    
+
     .tech-stack {
       display: flex;
       gap: 12px;
@@ -151,7 +188,7 @@
       margin-top: 24px;
       animation: fadeInUp 1.2s ease-out 0.6s both;
     }
-    
+
     .tech-tag {
       padding: 6px 14px;
       background: rgba(255, 255, 255, 0.05);
@@ -162,26 +199,20 @@
       color: rgba(255, 255, 255, 0.8);
       transition: all 0.3s ease;
     }
-    
+
     .tech-tag:hover {
-      background: rgba(96, 165, 250, 0.1);
+      background: rgba(229, 9, 20, 0.12);
       border-color: var(--accent);
       color: var(--accent);
       transform: translateY(-2px);
     }
-    
+
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    
-    /* Card */
+
+    /* Glass Card */
     .glass-card {
       width: 100%;
       max-width: 600px;
@@ -189,13 +220,13 @@
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 40px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
       animation: fadeInUp 1.4s ease-out 0.8s both;
       position: relative;
       overflow: hidden;
     }
-    
+
     .glass-card::before {
       content: '';
       position: absolute;
@@ -205,29 +236,27 @@
       height: 1px;
       background: linear-gradient(90deg, transparent, var(--accent), transparent);
     }
-    
+
     .card-header {
       margin-bottom: 32px;
     }
-    
+
     .card-title {
       font-size: 24px;
       font-weight: 700;
       margin-bottom: 8px;
       color: var(--text);
     }
-    
+
     .card-description {
       font-size: 15px;
-      color: rgba(255, 255, 255, 0.6);
+      color: rgba(255, 255, 255, 0.65);
       line-height: 1.6;
     }
-    
+
     /* Form */
-    .form-group {
-      margin-bottom: 24px;
-    }
-    
+    .form-group { margin-bottom: 24px; }
+
     label {
       display: block;
       font-size: 14px;
@@ -235,7 +264,7 @@
       margin-bottom: 8px;
       color: rgba(255, 255, 255, 0.9);
     }
-    
+
     input {
       width: 100%;
       padding: 14px 16px;
@@ -247,40 +276,38 @@
       transition: all 0.3s ease;
       outline: none;
     }
-    
+
     input:focus {
       background: rgba(255, 255, 255, 0.08);
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-glow);
     }
-    
-    input::placeholder {
-      color: rgba(255, 255, 255, 0.3);
-    }
-    
+
+    input::placeholder { color: rgba(255, 255, 255, 0.3); }
+
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
     }
-    
+
     /* Button */
     .btn-primary {
       width: 100%;
       padding: 16px 32px;
-      background: linear-gradient(135deg, var(--accent) 0%, #3b82f6 100%);
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
       border: none;
       border-radius: 12px;
       color: white;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
       margin-top: 8px;
     }
-    
+
     .btn-primary::before {
       content: '';
       position: absolute;
@@ -288,45 +315,40 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
       transition: left 0.5s ease;
     }
-    
-    .btn-primary:hover::before {
-      left: 100%;
-    }
-    
+
+    .btn-primary:hover::before { left: 100%; }
+
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 24px rgba(96, 165, 250, 0.4);
+      box-shadow: 0 18px 36px rgba(229, 9, 20, 0.45);
     }
-    
-    .btn-primary:active {
-      transform: translateY(0);
-    }
-    
+
+    .btn-primary:active { transform: translateY(0); }
+
     /* Architecture Section */
     .architecture {
       margin-top: 60px;
       padding: 32px;
       background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 16px;
       max-width: 800px;
+      width: 100%;
+      backdrop-filter: blur(8px);
     }
-    
+
     .arch-title {
       font-size: 20px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 20px;
       color: var(--accent);
     }
-    
-    .flow-steps {
-      display: grid;
-      gap: 16px;
-    }
-    
+
+    .flow-steps { display: grid; gap: 16px; }
+
     .flow-step {
       display: flex;
       align-items: center;
@@ -337,13 +359,13 @@
       border-radius: 12px;
       transition: all 0.3s ease;
     }
-    
+
     .flow-step:hover {
-      background: rgba(96, 165, 250, 0.05);
-      border-color: rgba(96, 165, 250, 0.3);
+      background: rgba(229, 9, 20, 0.06);
+      border-color: rgba(229, 9, 20, 0.28);
       transform: translateX(4px);
     }
-    
+
     .step-number {
       flex-shrink: 0;
       width: 40px;
@@ -351,37 +373,37 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, var(--accent), #3b82f6);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
       border-radius: 10px;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 18px;
     }
-    
+
     .step-text {
       flex: 1;
       font-size: 14px;
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(255, 255, 255, 0.82);
     }
-    
+
     /* Links */
     .links {
       margin-top: 40px;
       text-align: center;
     }
-    
+
     .links-title {
       font-size: 14px;
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(255, 255, 255, 0.55);
       margin-bottom: 12px;
     }
-    
+
     .link-buttons {
       display: flex;
       gap: 12px;
       justify-content: center;
       flex-wrap: wrap;
     }
-    
+
     .link-btn {
       display: inline-flex;
       align-items: center;
@@ -395,50 +417,61 @@
       font-size: 14px;
       transition: all 0.3s ease;
     }
-    
+
     .link-btn:hover {
-      background: rgba(96, 165, 250, 0.1);
-      border-color: var(--accent);
+      background: rgba(229, 9, 20, 0.10);
+      border-color: rgba(229, 9, 20, 0.35);
       transform: translateY(-2px);
     }
-    
+
+    @media (max-width: 900px) {
+      .poster-wall { grid-template-columns: repeat(3, 1fr); }
+    }
+
     @media (max-width: 768px) {
-      .container {
-        padding: 20px;
-      }
-      
-      .glass-card {
-        padding: 24px;
-      }
-      
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-      
-      .architecture {
-        padding: 20px;
-      }
+      .container { padding: 20px; }
+      .glass-card { padding: 24px; }
+      .form-row { grid-template-columns: 1fr; }
+      .architecture { padding: 20px; }
     }
   </style>
 </head>
+
 <body>
+  <!-- Poster wall -->
+  <div class="poster-wall">
+    <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg')"></div>
+    <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg')"></div>
+    <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/6ELCZlTA5lGUops70hKdB83WJxH.jpg')"></div>
+    <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg')"></div>
+    <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg')"></div>
+    <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg')"></div>
+    <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/kqjL17yufvn9OVLyXYpvtyrFfak.jpg')"></div>
+    <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/5BwqwxMEjeFtdknRV792Svo0K1v.jpg')"></div>
+    <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/r7XifzvtezNt31ypvsmb6Oqxw49.jpg')"></div>
+    <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/1E5baAaEse26fej7uHcjOgEE2t2.jpg')"></div>
+    <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/3K8w2cOZgG5B8Vqv9u2k6qg3q1s.jpg')"></div>
+    <div class="poster" style="background-image:url('https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg')"></div>
+  </div>
+
+  <div class="poster-overlay"></div>
   <div class="grid-bg"></div>
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
-  
+
   <div class="container">
     <div class="hero">
       <div class="badge">
         <span class="pulse-dot"></span>
         Full-Stack Engineering Project
       </div>
-      
+
       <h1>AI-Powered Movie<br>Recommendation Engine</h1>
-      
+
       <p class="subtitle">
         OAuth 2.0 Authentication • Dual API Integration • Intelligent Filtering
       </p>
-      
+
       <div class="tech-stack">
         <span class="tech-tag">Node.js</span>
         <span class="tech-tag">OAuth 2.0</span>
@@ -448,63 +481,64 @@
         <span class="tech-tag">HTTP/HTTPS</span>
       </div>
     </div>
-    
+
     <div class="glass-card">
       <div class="card-header">
         <div class="card-title">Get Personalized Recommendations</div>
         <div class="card-description">
-          Authenticate with GitHub to unlock AI-powered movie suggestions tailored to your profile. 
-          Our algorithm analyzes your bio and location to curate perfect matches.
+          Authenticate with GitHub to unlock AI-powered movie suggestions tailored to your profile.
+          Our algorithm analyzes your bio and location to curate matches.
         </div>
       </div>
-      
+
       <form action="/auth/github" method="get">
         <div class="form-group">
           <label for="full_name">Full Name</label>
-          <input 
-            id="full_name" 
-            name="full_name" 
-            type="text" 
-            placeholder="Enter your full name" 
-            required 
+          <input
+            id="full_name"
+            name="full_name"
+            type="text"
+            placeholder="Enter your full name"
+            required
           />
         </div>
-        
+
         <div class="form-row">
           <div class="form-group">
             <label for="min_rating">Min IMDb Rating</label>
-            <input 
-              id="min_rating" 
-              name="min_rating" 
-              type="number" 
-              step="0.1" 
-              min="0" 
-              max="10" 
-              value="7.0" 
+            <input
+              id="min_rating"
+              name="min_rating"
+              type="number"
+              step="0.1"
+              min="0"
+              max="10"
+              value="7.0"
               placeholder="7.0"
             />
           </div>
-          
+
           <div class="form-group">
             <label for="limit">Number of Movies</label>
-            <input 
-              id="limit" 
-              name="limit" 
-              type="number" 
-              min="1" 
-              max="10" 
-              value="10" 
+            <input
+              id="limit"
+              name="limit"
+              type="number"
+              min="1"
+              max="10"
+              value="10"
               placeholder="10"
             />
           </div>
         </div>
-        
+
         <button class="btn-primary" type="submit">
           🚀 Authenticate & Discover Movies
         </button>
       </form>
     </div>
-    
+
+    <!-- System Architecture (restored) -->
     <div class="architecture">
       <div class="arch-title">⚡ System Architecture</div>
       <div class="flow-steps">
@@ -534,16 +568,13 @@
         </div>
       </div>
     </div>
-    
+
+    <!-- Links (restored) -->
     <div class="links">
       <div class="links-title">Crafted by Devak Mehta</div>
       <div class="link-buttons">
-        <a href="https://www.curetrek.com/" target="_blank" rel="noopener noreferrer" class="link-btn">
-          🏥 CureTrek
-        </a>
-        <a href="https://devak-mehta-portfolio.netlify.app/" target="_blank" rel="noopener noreferrer" class="link-btn">
-          💼 Portfolio
-        </a>
+        <a href="https://www.curetrek.com/" target="_blank" rel="noopener noreferrer" class="link-btn">🏥 CureTrek</a>
+        <a href="https://devak-portfolio.netlify.app/" target="_blank" rel="noopener noreferrer" class="link-btn">💼 Portfolio</a>
       </div>
     </div>
   </div>

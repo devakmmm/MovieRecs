@@ -1,0 +1,20 @@
+meta {
+  name: OMDB
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://www.omdbapi.com/?i=tt3896198&apikey=589a3ba
+  body: none
+  auth: inherit
+}
+
+params:query {
+  i: tt3896198
+  apikey: 589a3ba
+}
+
+settings {
+  encodeUrl: true
+}

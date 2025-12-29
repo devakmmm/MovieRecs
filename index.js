@@ -46,7 +46,28 @@ const server = http.createServer(request_handler);
 server.listen(PORT, () => {
   console.log(`✅ Server listening on port ${PORT}`);
   console.log(`🌐 ${IS_PRODUCTION ? `https://${HOST}` : `http://localhost:${PORT}`}`);
+  
+  // Start keep-alive ping in production
+  if (IS_PRODUCTION) {
+    startKeepAlivePing();
+  }
 });
+
+// ---------------- Keep-Alive Ping ----------------
+function startKeepAlivePing() {
+  const PING_INTERVAL = 14 * 60 * 1000; // 14 minutes (Render free tier sleeps after 15 min)
+  const url = `https://${HOST}/health`;
+  
+  console.log(`⏰ Keep-alive ping enabled: ${url} every 14 minutes`);
+  
+  setInterval(() => {
+    https.get(url, (res) => {
+      console.log(`💓 Keep-alive ping: ${res.statusCode} at ${new Date().toISOString()}`);
+    }).on('error', (err) => {
+      console.log(`❌ Keep-alive ping failed: ${err.message}`);
+    });
+  }, PING_INTERVAL);
+}
 
 // ---------------- Routing ----------------
 function request_handler(req, res) {
@@ -76,7 +97,12 @@ function request_handler(req, res) {
   }
 
   if (req.method === "GET" && req.url === "/health") {
-    return send_json(res, 200, { status: "healthy", timestamp: new Date().toISOString() });
+    return send_json(res, 200, { 
+      status: "healthy", 
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: IS_PRODUCTION ? "production" : "development"
+    });
   }
 
   return send_text(res, 404, "404 Not Found");
